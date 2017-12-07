@@ -68,7 +68,9 @@ function format_percent_change(elem, change_percent, up_is_good)
 
 $(document).ready(function() {
 	$("#main-calc").click(function(){
-		var transaction_fee = 0.02;
+		// Assuming PayPal
+		var transaction_fee_factor = 0.05;
+		var transaction_fee_offset = 0.05;
 		
 		var you_pay_old = parseFloat($("#total-contributions").val());
 		var cont_count = parseInt($("#count-contributions").val());
@@ -79,7 +81,7 @@ $(document).ready(function() {
 		$("#you-pay-new").text(you_pay_new);
 		format_percent_change($("#you-pay-change"), change_total, false);
 		
-		var creator_gets_old = (you_pay_old * (0.95 - transaction_fee)).toFixed(2);
+		var creator_gets_old = ((you_pay_old * (0.95 - transaction_fee_factor)) - transaction_fee_offset).toFixed(2);
 		var creator_gets_new = (you_pay_old * (0.95)).toFixed(2);
 		var creator_gets_change = (creator_gets_new - creator_gets_old) / creator_gets_old;
 		
@@ -153,13 +155,15 @@ Total amount of monthly contributions:
 </tr>
 
 <tr>
-<td class="col-header">Creator gets as a percentage what you pay:</td>
+<td class="col-header">Creator gets as a percentage of what you pay:</td>
 <td id="creator-gets-percent-old"></td>
 <td id="creator-gets-percent-new"></td>
 <td id="creator-gets-percent-change"></td>
 </tr>
 </tbody>
 </table>
+
+<div><small>Note: This script assumes creators use PayPal.</small></div>
 
 </body>
 
