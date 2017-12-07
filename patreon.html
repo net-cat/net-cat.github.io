@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>New Patreon Fee Structure Calculator</title>
+
+<style>
+<!--
+.section-box { border: 1px black solid; width: 50%; margin-bottom: 10pt; padding: 3pt; }
+table, tr, td { border: 1px black solid; border-collapse: collapse; padding: 3pt; text-align: center; }
+.col-header { text-align: right; }
+
+.good { color: green; }
+.bad { color: red; }
+#contribution-list { width: 80%; }
+-->
+</style>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery.min.js"></script>
+
+<script type="text/javascript">
+<!--
+function percent(val)
+{
+	return (val * 100.0).toFixed(1) + "%";
+}
+
+function class_flip(elem, give, take)
+{
+	if(!elem.hasClass(give))
+	{
+		elem.addClass(give);
+	}
+	if(elem.hasClass(take))
+	{
+		elem.removeClass(take);
+	}
+}
+
+function good_bad(elem, is_good)
+{
+	var pos = "good";
+	var neg = "bad";
+	
+	if(is_good)
+	{
+		class_flip(elem, pos, neg);
+	}
+	else
+	{
+		class_flip(elem, neg, pos);
+	}
+}
+
+function format_percent_change(elem, change_percent, up_is_good)
+{
+	if(up_is_good)
+	{
+		good_bad(elem, change_percent >= 0.0);
+	}
+	else
+	{
+		good_bad(elem, change_percent < 0.0);
+	}
+	
+	elem.text((change_percent * 100.0).toFixed(1) + "%");
+}
+
+$(document).ready(function() {
+	$("#main-calc").click(function(){
+		var transaction_fee = 0.02;
+		
+		var you_pay_old = parseFloat($("#total-contributions").val());
+		var cont_count = parseInt($("#count-contributions").val());
+		var you_pay_new = (you_pay_old * 1.029 + cont_count * 0.35).toFixed(2);
+		var change_total = (you_pay_new - you_pay_old) / you_pay_old;
+		
+		$("#you-pay-old").text(you_pay_old);
+		$("#you-pay-new").text(you_pay_new);
+		format_percent_change($("#you-pay-change"), change_total, false);
+		
+		var creator_gets_old = (you_pay_old * (0.95 - transaction_fee)).toFixed(2);
+		var creator_gets_new = (you_pay_old * (0.95)).toFixed(2);
+		var creator_gets_change = (creator_gets_new - creator_gets_old) / creator_gets_old;
+		
+		$("#creator-gets-old").text(creator_gets_old);
+		$("#creator-gets-new").text(creator_gets_new);
+		format_percent_change($("#creator-gets-change"), creator_gets_change, true);
+		
+		var creator_gets_percent_old = creator_gets_old / you_pay_old;
+		var creator_gets_percent_new = creator_gets_new / you_pay_new;
+		var creator_gets_percent_change = creator_gets_percent_new - creator_gets_percent_old;
+
+		$("#creator-gets-percent-old").text(percent(creator_gets_percent_old));
+		$("#creator-gets-percent-new").text(percent(creator_gets_percent_new));
+		format_percent_change($("#creator-gets-percent-change"), creator_gets_percent_change, true);
+		
+	});
+	$("#pre-calc").click(function() {
+		var cont_list = $("#contribution-list").val().split(" ");
+		var you_pay_old = 0.0;
+		for(var i = 0; i < cont_list.length; ++i)
+		{
+			you_pay_old += parseFloat(cont_list[i]);
+		}
+		$("#count-contributions").val(cont_list.length);
+		$("#total-contributions").val(you_pay_old);
+	});
+});
+//-->
+</script>
+
+</head>
+
+<body>
+<div class="section-box">
+Enter a list of your monthly contributions, separated by spaces.<br>
+<input type="text" name="contribution-list" id="contribution-list"><br>
+<input type="button" id="pre-calc" value="Calculate">
+</div>
+
+<div class="section-box">
+Number of monthly contributions:
+<input type="text" name="count-contributions" id="count-contributions"><br>
+Total amount of monthly contributions:
+<input type="text" name="total-contributions" id="total-contributions"><br>
+<input type="button" id="main-calc" value="Calculate">
+</div>
+
+<table>
+<thead>
+<tr>
+<td></td>
+<td>Old</td>
+<td>New</td>
+<td>Change</td>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="col-header">You pay:</td>
+<td id="you-pay-old"></td>
+<td id="you-pay-new"></td>
+<td id="you-pay-change"></td>
+</tr>
+
+<tr>
+<td class="col-header">Creator gets:</td>
+<td id="creator-gets-old"></td>
+<td id="creator-gets-new"></td>
+<td id="creator-gets-change"></td>
+</tr>
+
+<tr>
+<td class="col-header">Creator gets as a percentage of total:</td>
+<td id="creator-gets-percent-old"></td>
+<td id="creator-gets-percent-new"></td>
+<td id="creator-gets-percent-change"></td>
+</tr>
+</tbody>
+</table>
+
+</body>
+
+</html> 
