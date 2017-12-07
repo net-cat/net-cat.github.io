@@ -99,6 +99,7 @@ $(document).ready(function() {
 	});
 	$("#pre-calc").click(function() {
 		var cont_list = $("#contribution-list").val().split(" ");
+		cont_list = cont_list.filter(function(n){ return n != ""; })
 		var you_pay_old = 0.0;
 		for(var i = 0; i < cont_list.length; ++i)
 		{
